@@ -15,7 +15,7 @@ def s3_connection():
     else:
         print("s3 bucket connected!")
         return s3 
-    
+      
 s3 = s3_connection()
 app = Flask(__name__)  
 
