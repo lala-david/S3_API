@@ -1,4 +1,6 @@
 import boto3
+import uuid
+import time
 from flask import Flask, jsonify, request, render_template
 from werkzeug.utils import secure_filename
 
@@ -15,11 +17,11 @@ def s3_connection():
     else:
         print("s3 bucket connected!")
         return s3 
-      
+    
 s3 = s3_connection()
 app = Flask(__name__)  
 
-app.config['S3_BUCKET_NAME'] = ''   
+app.config['S3_BUCKET_NAME'] = 'seongjun-flask'   
  
 @app.route('/imgupload', methods=['POST'])
 def upload_file():
@@ -28,8 +30,14 @@ def upload_file():
     if file:
         filename = secure_filename(file.filename)
         
+ 
+        file_ext = filename.split('.')[-1]
+        
+ 
+        new_filename = f"{str(uuid.uuid4())}_{int(time.time())}.{file_ext}"
+        
         try:
-            s3.upload_fileobj(file, app.config['S3_BUCKET_NAME'], filename)
+            s3.upload_fileobj(file, app.config['S3_BUCKET_NAME'], new_filename)
             return render_template('success.html')  
           
         except Exception as e:
