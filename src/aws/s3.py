@@ -29,16 +29,17 @@ def upload_file():
     
     if file:
         filename = secure_filename(file.filename)
-        
  
+
         file_ext = filename.split('.')[-1]
         
- 
+
         new_filename = f"{str(uuid.uuid4())}_{int(time.time())}.{file_ext}"
         
         try:
             s3.upload_fileobj(file, app.config['S3_BUCKET_NAME'], new_filename)
-            return render_template('success.html')  
+            file_url = f"https://{app.config['S3_BUCKET_NAME']}.s3.ap-northeast-2.amazonaws.com/{new_filename}"
+            return render_template('success.html', file_url=file_url)  
           
         except Exception as e:
             return jsonify(message=str(e)), 500
